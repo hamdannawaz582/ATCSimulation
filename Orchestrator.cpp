@@ -13,9 +13,14 @@ Orchestrator::Orchestrator() {
         runways[i] = Runway{char('A' + i), false, nullptr};
     }
     int index = 0;
+    bool flag = false;
     for (auto const& airline : AirlineIDList) {
         auto [identifier, type, aircraft, flights] = airline.second;
         airlines[index++] = new Airline (airline.first, type, aircraft, flights, 0);
+        if (!flag && type == "Cargo") {
+            airlines[index-1]->aircraftGen("At Gate", "West", true);
+            flag = true;
+        }
     }
 }
 
