@@ -8,14 +8,12 @@
 
 #define FINE 1000
 
-extern std::unordered_map<string, tuple<string, string, int, int>> AircraftIDList;
-
 Orchestrator::Orchestrator() {
     for (int i = 0; i < 3; i++) {
         runways[i] = Runway{char('A' + i), false, nullptr};
     }
     int index = 0;
-    for (auto const& airline : AircraftIDList) {
+    for (auto const& airline : AirlineIDList) {
         auto [identifier, type, aircraft, flights] = airline.second;
         airlines[index++] = new Airline (airline.first, type, aircraft, flights, 0);
     }
@@ -88,6 +86,12 @@ void Orchestrator::scheduleRunways() {
             }
         }
     }
+}
+
+void Orchestrator::simulateEmergency() {
+}
+
+void Orchestrator::simulateGroundFault() {
 }
 
 void Orchestrator::proceedSimulation() {

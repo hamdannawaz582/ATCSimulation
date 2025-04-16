@@ -3,10 +3,9 @@
 //
 #include "AircraftIDList.h"
 #include "Aircraft.h"
-extern std::unordered_map<string, tuple<string, string, int, int>> AircraftIDList;
 
 string Aircraft::get_id() const {
-    return std::get<0>(AircraftIDList[airline]) + std::to_string(ID);
+    return std::get<0>(AirlineIDList[airline]) + std::to_string(ID);
 }
 
 string Aircraft::get_airline() const {
@@ -30,5 +29,5 @@ Aircraft::Aircraft(int id, string airline, string type, string status, string di
     this->speed = 0;
     this->AVN = false;
     this->direction = direction;
-    this->takeoff = takeoff;
+    this->takeoffFlag = takeoff;
 }
