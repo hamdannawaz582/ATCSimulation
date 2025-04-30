@@ -16,8 +16,12 @@ class Aircraft {
     string airline;
     string type;
     string status;
+    int scheduletime;
+    int waittime;
 
 public:
+    string phase;
+    int priority;
     int speed;
     bool AVN;
     string direction;
@@ -40,6 +44,7 @@ public:
     string get_status() const;
 
     Aircraft(int id, string airline, string type, string status, string direction, bool takeoff);
+    void SetPhase();
 };
 
 

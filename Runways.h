@@ -4,12 +4,17 @@
 
 #ifndef RUNWAYS_H
 #define RUNWAYS_H
+#include <mutex>
+
 #include "Aircraft.h"
 
-struct Runway {
+class Runway {
+public:
     char ID;
     bool status;
     Aircraft * aircraftUsing;
+    std::mutex mtx;
+
 };
 
 #endif //RUNWAYS_H

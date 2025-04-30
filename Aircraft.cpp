@@ -30,4 +30,30 @@ Aircraft::Aircraft(int id, string airline, string type, string status, string di
     this->AVN = false;
     this->direction = direction;
     this->takeoffFlag = takeoff;
+    this->priority = -1;
+    if (takeoff)
+        phase = "Gate";
+    else
+        phase = "Holding";
+}
+
+void Aircraft::SetPhase() {
+    if (takeoffFlag) {
+        if (phase == "Gate")
+            phase = "Taxi";
+        else if (phase == "Taxi")
+            phase = "Takeoff";
+        else if (phase == "Takeoff")
+            phase = "Departure";
+    }
+    else {
+        if (phase == "Holding")
+            phase = "Approach";
+        else if (phase == "Approach")
+            phase = "Land";
+        else if (phase == "Land")
+            phase = "Taxi";
+        else if (phase == "Taxi")
+            phase = "Gate";
+    }
 }
