@@ -24,6 +24,7 @@ class Orchestrator {
     void simulateEmergency();
     void simulateGroundFault();
     void* findAvailableRunway(void* arg);
+    void RemoveAircraft(Aircraft* aircraft);
 
 public:
     Orchestrator();

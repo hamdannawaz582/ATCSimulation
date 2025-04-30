@@ -13,7 +13,11 @@ class FlightSchedule {
     //  Priority is (1-low and 4-high)
     struct ComparePriority {
         bool operator()(Aircraft* a, Aircraft* b) {
-            return a->priority < b->priority;
+            // return a->priority < b->priority;
+            if (a->priority != b->priority)
+                return a->priority < b->priority; // Higher priority first
+            else
+                return a->scheduletime() > b->scheduletime;
         }
     };
 

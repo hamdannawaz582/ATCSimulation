@@ -103,6 +103,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 while (aircraft->phase != gate) {
                     std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                     std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
+                    checkFines();
                     aircraft->SetPhase();
                     // sleep(1);
                 }
@@ -111,6 +112,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[2]->status = false;
             std::cout << std::endl;
+            RemoveAircraft(aircraft);
             runways[2]->mtx.unlock();
             pthread_exit(NULL);
         } else if (aircraft->direction == "North" || aircraft->direction == "South" || !aircraft->takeoffFlag) {
@@ -125,6 +127,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 while (aircraft->phase != gate) {
                     std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                     std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
+                    checkFines();
                     aircraft->SetPhase();
                     // sleep(1);
                 }
@@ -133,6 +136,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[0]->status = false;
             std::cout << std::endl;
+            RemoveAircraft(aircraft);
             runways[0]->mtx.unlock();
             pthread_exit(NULL);
 
@@ -149,6 +153,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 while (aircraft->phase != gate) {
                     std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                     std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
+                    checkFines();
                     aircraft->SetPhase();
                     // sleep(1);
                 }
@@ -157,6 +162,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[1]->status = false;
             std::cout << std::endl;
+            RemoveAircraft(aircraft);
             runways[1]->mtx.unlock();
             pthread_exit(NULL);
         }
@@ -180,6 +186,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             while (aircraft->phase != gate) {
                 std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                 std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
+                checkFines();
                 aircraft->SetPhase();
                 // sleep(1);
             }
@@ -188,25 +195,23 @@ void* Orchestrator::findAvailableRunway(void* arg) {
         }
         runways[2]->status = false;
         std::cout << std::endl;
+        RemoveAircraft(aircraft);
         runways[2]->mtx.unlock();
         pthread_exit(NULL);
     }
     pthread_exit(NULL);
 }
 
+void Orchestrator::RemoveAircraft(Aircraft* aircraft) {
+    for (int i=0 ; i<6 ; i++) {
+        if (aircraft->get_airline() == airlines[i]->name) {
+            airlines[i]->aircraftReturn(aircraft);
+            break;
+        }
+    }
+}
+
 void Orchestrator::scheduleRunways() {
-    // for (auto const& aircraft : aircrafts) {
-    //     // Assign runways based on direction of travel and type
-    //     if (aircraft->takeoffFlag && aircraft->get_status() == "At Gate" || !(aircraft->takeoffFlag) && aircraft->get_status() == "Holding") {
-    //         if (aircraft->get_type() == "Military" || aircraft->get_type() == "Cargo") {
-    //             runways[2].aircraftUsing = aircraft;
-    //         } else if (aircraft->direction == "North" || aircraft->direction == "South") {
-    //             runways[0].aircraftUsing = aircraft;
-    //         } else if (aircraft->direction == "East" || aircraft->direction == "West") {
-    //             runways[1].aircraftUsing = aircraft;
-    //         }
-    //     }
-    // }
     sf::Clock clock;
 
     while (true) {
@@ -227,6 +232,7 @@ void Orchestrator::scheduleRunways() {
                 }, new std::pair<Orchestrator*, Aircraft*>(this, nextFlight));
 
                 pthread_join(thread, nullptr);
+                // pthread_detach(thread);
             }
         }
 
@@ -240,43 +246,131 @@ void Orchestrator::scheduleRunways() {
 }
 
 void Orchestrator::AddFlights() {
-    // Create and add a mix of aircraft types with different priorities and directions
-    // Commercial flights (lower priority)
-    // Sample Aircraft Entries
-    Aircraft* flight1 = airlines[0]->aircraftGen("At Gate", "East", true, 5);  // PIA departure at time 5
-    if (flight1) {
-        flight1->priority = 1;  // Low priority
-        aircrafts.push_back(flight1);
-        std::cout << "Added departure: " << flight1->get_id() << " (Priority: " << flight1->priority << ", Schedule Time: " << flight1->scheduletime << ")\n";
-    }
+   int numFlights;
+    std::cout << "Enter the number of flights to add: ";
+    std::cin >> numFlights;
 
-    Aircraft* flight2 = airlines[1]->aircraftGen("Holding", "North", false, 5);  // Airblue arrival at time 10
-    if (flight2) {
-        flight2->priority = 2;  // Medium priority
-        aircrafts.push_back(flight2);
-        std::cout << "Added arrival: " << flight2->get_id() << " (Priority: " << flight2->priority << ", Schedule Time: " << flight2->scheduletime << ")\n";
-    }
+    for (int i = 0; i < numFlights; ++i) {
+        std::string status, direction;
+        bool takeoff;
+        int schedTime, priority, airlineIndex;
 
-    Aircraft* flight3 = airlines[2]->aircraftGen("Holding", "South", false, 5);  // FedEx arrival at time 15
-    if (flight3) {
-        flight3->priority = 3;  // High priority
-        aircrafts.push_back(flight3);
-        std::cout << "Added cargo arrival: " << flight3->get_id() << " (Priority: " << flight3->priority << ", Schedule Time: " << flight3->scheduletime << ")\n";
-    }
+        std::cout << "\nAdding flight " << (i + 1) << ":\n";
 
-    Aircraft* flight4 = airlines[3]->aircraftGen("At Gate", "West", true, 5);  // Military departure at time 20
-    if (flight4) {
-        flight4->priority = 4;  // Emergency priority
-        aircrafts.push_back(flight4);
-        std::cout << "Added military departure: " << flight4->get_id() << " (Priority: " << flight4->priority << ", Schedule Time: " << flight4->scheduletime << ")\n";
-    }
+        // Select airline
+        std::cout << "Select Airline:\n";
+        for (int j = 0; j < 6; ++j) {
+            std::cout << j + 1 << ". " << airlines[j]->name << "\n";
+        }
+        std::cout << "Enter choice (1-6): ";
+        std::cin >> airlineIndex;
+        --airlineIndex; // Adjust for 0-based indexing
 
-    Aircraft* flight5 = airlines[5]->aircraftGen("Holding", "East", false, 5);  // Medical arrival at time 25
-    if (flight5) {
-        flight5->priority = 4;  // Emergency priority
-        aircrafts.push_back(flight5);
-        std::cout << "Added emergency arrival: " << flight5->get_id() << " (Priority: " << flight5->priority << ", Schedule Time: " << flight5->scheduletime << ")\n";
+        // Determine if it's a takeoff flight
+        std::cout << "Is this a takeoff flight? (1 for Yes, 0 for No): ";
+        std::cin >> takeoff;
+
+        // Select status based on takeoff flag
+        if (takeoff) {
+            std::cout << "Select Status:\n1. At Gate\n2. Taxi\n3. Takeoff Roll\n4. Climb\n5. Departure\n";
+            std::cout << "Enter choice (1-5): ";
+            int statusChoice;
+            std::cin >> statusChoice;
+            if (statusChoice == 1) status = "At Gate";
+            else if (statusChoice == 2) status = "Taxi";
+            else if (statusChoice == 3) status = "Takeoff Roll";
+            else if (statusChoice == 4) status = "Climb";
+            else if (statusChoice == 5) status = "Departure";
+        } else {
+            std::cout << "Select Status:\n1. Holding\n2. Approach\n3. Land\n4. Taxi\n5. At Gate\n";
+            std::cout << "Enter choice (1-5): ";
+            int statusChoice;
+            std::cin >> statusChoice;
+            if (statusChoice == 1) status = "Holding";
+            else if (statusChoice == 2) status = "Approach";
+            else if (statusChoice == 3) status = "Land";
+            else if (statusChoice == 4) status = "Taxi";
+            else if (statusChoice == 5) status = "At Gate";
+        }
+
+        // Select direction
+        if (!takeoff) {
+            std::cout << "Select Direction:\n1. North\n2. South\n";
+            std::cout << "Enter choice (1-2): ";
+            int directionChoice;
+            std::cin >> directionChoice;
+            if (directionChoice == 1) direction = "North";
+            else if (directionChoice == 2) direction = "South";
+        } else {
+            std::cout << "Select Direction:\n1. East\n2. West\n";
+            std::cout << "Enter choice (1-2): ";
+            int directionChoice;
+            std::cin >> directionChoice;
+            if (directionChoice == 1) direction = "East";
+            else if (directionChoice == 2) direction = "West";
+        }
+
+        // Enter schedule time
+        std::cout << "Enter schedule time (in seconds): ";
+        std::cin >> schedTime;
+
+        // Enter priority
+        std::cout << "Enter priority (1-4, 4 being highest): ";
+        std::cin >> priority;
+
+        // Generate aircraft
+        Aircraft* flight = airlines[airlineIndex]->aircraftGen(status, direction, takeoff, schedTime);
+        if (flight) {
+            flight->priority = priority;
+            aircrafts.push_back(flight);
+            std::cout << "Added flight: " << flight->get_id()
+                      << " (Priority: " << flight->priority
+                      << ", Schedule Time: " << flight->scheduletime << ")\n";
+        } else {
+            std::cout << "Failed to add flight. Check airline constraints.\n";
+        }
+
+        // Clear input buffer to avoid issues with invalid input
+        std::cin.clear();
+        std::cin.ignore();
     }
+    // // Create and add a mix of aircraft types with different priorities and directions
+    // // Commercial flights (lower priority)
+    // // Sample Aircraft Entries
+    // Aircraft* flight1 = airlines[0]->aircraftGen("At Gate", "East", true, 5);  // PIA departure at time 5
+    // if (flight1) {
+    //     flight1->priority = 1;  // Low priority
+    //     aircrafts.push_back(flight1);
+    //     std::cout << "Added departure: " << flight1->get_id() << " (Priority: " << flight1->priority << ", Schedule Time: " << flight1->scheduletime << ")\n";
+    // }
+    //
+    // Aircraft* flight2 = airlines[1]->aircraftGen("Holding", "North", false, 5);  // Airblue arrival at time 10
+    // if (flight2) {
+    //     flight2->priority = 2;  // Medium priority
+    //     aircrafts.push_back(flight2);
+    //     std::cout << "Added arrival: " << flight2->get_id() << " (Priority: " << flight2->priority << ", Schedule Time: " << flight2->scheduletime << ")\n";
+    // }
+    //
+    // Aircraft* flight3 = airlines[2]->aircraftGen("Holding", "South", false, 5);  // FedEx arrival at time 15
+    // if (flight3) {
+    //     flight3->priority = 3;  // High priority
+    //     aircrafts.push_back(flight3);
+    //     std::cout << "Added cargo arrival: " << flight3->get_id() << " (Priority: " << flight3->priority << ", Schedule Time: " << flight3->scheduletime << ")\n";
+    // }
+    //
+    // Aircraft* flight4 = airlines[3]->aircraftGen("At Gate", "West", true, 5);  // Military departure at time 20
+    // if (flight4) {
+    //     flight4->priority = 4;  // Emergency priority
+    //     aircrafts.push_back(flight4);
+    //     std::cout << "Added military departure: " << flight4->get_id() << " (Priority: " << flight4->priority << ", Schedule Time: " << flight4->scheduletime << ")\n";
+    // }
+    //
+    // Aircraft* flight5 = airlines[5]->aircraftGen("Holding", "East", false, 5);  // Medical arrival at time 25
+    // if (flight5) {
+    //     flight5->priority = 4;  // Emergency priority
+    //     aircrafts.push_back(flight5);
+    //     std::cout << "Added emergency arrival: " << flight5->get_id() << " (Priority: " << flight5->priority << ", Schedule Time: " << flight5->scheduletime << ")\n";
+    // }
 }
 
 void Orchestrator::simulateEmergency() {
@@ -287,7 +381,6 @@ void Orchestrator::simulateGroundFault() {
 
 void Orchestrator::proceedSimulation() {
     // TODO: Add timer code to implement delta time after adding SFML
-    checkFines();
     scheduleRunways();
     simulateEmergency();
 
@@ -296,7 +389,6 @@ void Orchestrator::proceedSimulation() {
             simulateGroundFault();
         }
     }
-
 }
 
 Orchestrator::~Orchestrator() {
