@@ -95,16 +95,20 @@ void* Orchestrator::findAvailableRunway(void* arg) {
         if (aircraft->get_type() == "Military" || aircraft->get_type() == "Cargo") {
             //  Auto unlocks the mutex when the scope ends
             std::cout << aircraft->get_id() << " Waiting to use Runway " << runways[2]->ID << "\n";
-            std::lock_guard<std::mutex> lock(runways[2]->mtx);
+            // std::lock_guard<std::mutex> lock(runways[2]->mtx);
+            runways[2]->mtx.lock();
             if (!runways[2]->status) {
                 std::cout << aircraft->get_id() << " Started using Runway " << runways[2]->ID << "\n";
                 runways[2]->status = true;
                 runways[2]->aircraftUsing = aircraft;
-                pthread_exit(NULL);
             }
+            runways[2]->status = false;
+            runways[2]->mtx.unlock();
+            pthread_exit(NULL);
         } else if (aircraft->direction == "North" || aircraft->direction == "South" || !aircraft->takeoffFlag) {
             std::cout << aircraft->get_id() << " Waiting to use Runway " << runways[0]->ID << "\n";
-            std::lock_guard<std::mutex> lock(runways[0]->mtx);
+            // std::lock_guard<std::mutex> lock(runways[0]->mtx);
+            runways[0]->mtx.lock();
             if (!runways[0]->status) {
                 std::cout << aircraft->get_id() << " Started using Runway " << runways[0]->ID << "\n";
                 runways[0]->status = true;
@@ -115,12 +119,15 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     aircraft->SetPhase();
                 }
                 std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
-                pthread_exit(NULL);
-
             }
+            runways[0]->status = false;
+            runways[0]->mtx.unlock();
+            pthread_exit(NULL);
+
         } else if (aircraft->direction == "East" || aircraft->direction == "West" || aircraft->takeoffFlag) {
             std::cout << aircraft->get_id() << " Waiting to use Runway " << runways[1]->ID << "\n";
-            std::lock_guard<std::mutex> lock(runways[1]->mtx);
+            // std::lock_guard<std::mutex> lock(runways[1]->mtx);
+            runways[1]->mtx.lock();
             if (!runways[1]->status) {
                 std::cout << aircraft->get_id() << " Started using Runway " << runways[1]->ID << "\n";
 
@@ -132,10 +139,13 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     aircraft->SetPhase();
                 }
                 std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
-                pthread_exit(NULL);
             }
+            runways[1]->status = false;
+            runways[1]->mtx.unlock();
+            pthread_exit(NULL);
         }
-        std::lock_guard<std::mutex> lock(runways[2]->mtx);
+        // std::lock_guard<std::mutex> lock(runways[2]->mtx);
+        runways[2]->mtx.lock();
         if (aircraft->priority == 4) {  //  Priority 3 means Emergency
             std::cout << aircraft->get_id() << " Waiting to use Runway " << runways[2]->ID << "\n";
             //  Pre-empting the aircraft from runway[2]
@@ -156,8 +166,10 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 aircraft->SetPhase();
             }
             std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
-            pthread_exit(NULL);
         }
+        runways[2]->status = false;
+        runways[2]->mtx.unlock();
+        pthread_exit(NULL);
     }
     pthread_exit(NULL);
 }
@@ -184,7 +196,7 @@ void Orchestrator::scheduleRunways() {
         return params->first->findAvailableRunway(params->second);
         }, new std::pair<Orchestrator*, Aircraft*>(this, nextFlight));
 
-        pthread_join(thread, nullptr);
+        // pthread_join(thread, nullptr);
     }
 
 }
