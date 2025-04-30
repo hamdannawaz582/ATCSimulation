@@ -22,7 +22,7 @@ public:
     string name;
 
     Airline(string name, string type, int aircraftNumber, int aircraftDeployed, int flightsInOperation);
-    Aircraft * aircraftGen(string status, string direction, bool takeoff);
+    Aircraft * aircraftGen(string status, string direction, bool takeoff, int schedTime);
     bool aircraftAvailable();
     bool aircraftReturn(Aircraft * aircraft);
     void addFine(int fine);

@@ -5,6 +5,7 @@
 #ifndef ORCHESTRATOR_H
 #define ORCHESTRATOR_H
 #include <vector>
+#include <SFML/System/Clock.hpp>
 
 #include "Airline.h"
 #include "FlightSchedule.h"
@@ -17,6 +18,7 @@ class Orchestrator {
     vector<Aircraft *> aircrafts;
     Airline * airlines[6];
     FlightSchedule schedule;
+    // sf::Clock clock;
     void fineAirline(string airline);
     void scheduleRunways();
     void simulateEmergency();

@@ -20,7 +20,7 @@ string Aircraft::get_status() const {
     return status;
 }
 
-Aircraft::Aircraft(int id, string airline, string type, string status, string direction, bool takeoff) {
+Aircraft::Aircraft(int id, string airline, string type, string status, string direction, bool takeoff, int schedTime) {
     this->airline = airline;
     this->type = type;
     this->status = status;
@@ -32,6 +32,8 @@ Aircraft::Aircraft(int id, string airline, string type, string status, string di
     this->takeoffFlag = takeoff;
     this->priority = -1;
     this->phase = status;
+    this->scheduletime = schedTime;
+    this->waittime = 0;
     SetSpeed();
 }
 
@@ -43,7 +45,7 @@ void Aircraft::SetSpeed() {
             min = 400; max = 600;
         } else if (phase == "Approach") {
             min = 240; max = 290;
-        } else if (phase == "Landing") {
+        } else if (phase == "Land") {
             min = 30; max = 240;
         } else if (phase == "Taxi") {
             min = 15; max = 30;
