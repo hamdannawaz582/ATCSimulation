@@ -44,6 +44,7 @@ public:
     string get_status() const;
 
     Aircraft(int id, string airline, string type, string status, string direction, bool takeoff);
+    void SetSpeed();
     void SetPhase();
 };
 
