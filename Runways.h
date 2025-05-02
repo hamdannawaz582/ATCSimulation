@@ -5,15 +5,15 @@
 #ifndef RUNWAYS_H
 #define RUNWAYS_H
 #include <mutex>
-
+#include <atomic>
 #include "Aircraft.h"
 
 class Runway {
 public:
     char ID;
-    bool status;
+    std::atomic<bool> status;
     Aircraft * aircraftUsing;
-    std::mutex mtx;
+    pthread_mutex_t mtx;
 
 };
 

@@ -32,7 +32,7 @@ Aircraft::Aircraft(int id, string airline, string type, string status, string di
     this->takeoffFlag = takeoff;
     this->priority = -1;
     this->phase = status;
-    this->scheduletime = schedTime;
+    this->arrivaltime = schedTime;
     this->waittime = 0;
     SetSpeed();
 }

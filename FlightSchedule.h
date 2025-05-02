@@ -17,7 +17,7 @@ class FlightSchedule {
             if (a->priority != b->priority)
                 return a->priority < b->priority; // Higher priority first
             else
-                return a->scheduletime() > b->scheduletime;
+                return a->arrivaltime > b->arrivaltime;
         }
     };
 

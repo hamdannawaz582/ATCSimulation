@@ -18,6 +18,7 @@ class Aircraft {
     string status;
 
 public:
+    int arrivaltime;
     int scheduletime;
     int waittime;
     string phase;
