@@ -11,6 +11,7 @@
 #include "pthread.h"
 #include <string>
 #include <unistd.h>
+#include <raylib.h>
 
 #define FINE 1000
 
@@ -248,6 +249,23 @@ void Orchestrator::RemoveAircraft(Aircraft* aircraft) {
             break;
         }
     }
+}
+
+/// Function to create and run the GUI
+/// @param arg Object itself
+/// @return Nothing
+void * Orchestrator::loadGUI(void *arg) {
+    const int screenWidth = 800;
+    const int screenHeight = 450;
+
+    InitWindow(screenWidth, screenHeight, "AirTrafficControlX");
+    SetTargetFPS(60);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        DrawFPS(5, 5);
+        EndDrawing();
+    }
+
 }
 
 void Orchestrator::scheduleRunways() {
