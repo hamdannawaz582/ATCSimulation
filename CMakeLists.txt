@@ -25,7 +25,10 @@ add_executable(ATCSimulation main.cpp
         AircraftIDList.h
         Runways.h
         Orchestrator.cpp
-        Orchestrator.h)
+        Orchestrator.h
+        FlightSchedule.cpp
+        FlightSchedule.h
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)

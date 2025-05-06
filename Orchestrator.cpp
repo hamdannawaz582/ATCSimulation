@@ -12,6 +12,7 @@
 #include <string>
 #include <unistd.h>
 #include <raylib.h>
+#include <chrono>
 
 #define FINE 1000
 
@@ -258,21 +259,41 @@ void * Orchestrator::loadGUI(void *arg) {
     const int screenWidth = 800;
     const int screenHeight = 450;
 
+    auto * obj = static_cast<Orchestrator*>(arg);
+
     InitWindow(screenWidth, screenHeight, "AirTrafficControlX");
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         BeginDrawing();
         DrawFPS(5, 5);
+
+
+        // Drawing the runways
+        DrawRectangle(189, 97, 32, 256, GRAY); // Runway A
+        DrawRectangle(221, 321, 256, 32, GRAY); // Runway B
+        DrawRectangle(139, 97, 32, 256, GRAY); // Runway C
+
+        // Drawing Taxiways
+        DrawRectangle(221, 359, 192, 8, GRAY);
+        DrawRectangle(176, 129, 8, 192, GRAY);
+        DrawRectangle(126, 129, 8, 192, GRAY);
+
+        // Drawing Labels
+        DrawText("A", 195, 292, 20, BLACK);
+        DrawText("B", 228, 321, 20, BLACK);
+        DrawText("C", 145, 292, 20, BLACK);
+
         EndDrawing();
     }
 
 }
 
 void Orchestrator::scheduleRunways() {
-    sf::Clock clock;
-
+    //sf::Clock clock;
+    auto start = std::chrono::high_resolution_clock::now();
     while (true) {
-        float elapsedTime = clock.getElapsedTime().asSeconds();
+        float elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0f;
+        start = std::chrono::high_resolution_clock::now();
 
         for (size_t i = 0; i < aircrafts.size(); ++i) {
             if (elapsedTime >= aircrafts[i]->arrivaltime) {
