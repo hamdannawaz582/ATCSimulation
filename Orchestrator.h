@@ -5,7 +5,7 @@
 #ifndef ORCHESTRATOR_H
 #define ORCHESTRATOR_H
 #include <vector>
-#include <SFML/System/Clock.hpp>
+//#include <SFML/System/Clock.hpp>
 
 #include "Airline.h"
 #include "FlightSchedule.h"
@@ -26,11 +26,13 @@ class Orchestrator {
     void* findAvailableRunway(void* arg);
     void RemoveAircraft(Aircraft* aircraft);
 
+
 public:
     Orchestrator();
     void AddFlights();
     void checkFines();
     void proceedSimulation();
+    static void * loadGUI(void *arg);
     ~Orchestrator();
 };
 
