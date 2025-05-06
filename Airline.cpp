@@ -16,12 +16,12 @@ Airline::Airline(string name, string type, int aircraftNumber, int aircraftDeplo
 /// Generator for Aircraft Objects
 /// @param status The state in which to generate the Aircraft
 /// @return A new Aircraft Object initialized to the Airline's specifications
-Aircraft * Airline::aircraftGen(string status, string direction, bool takeoff) {
+Aircraft * Airline::aircraftGen(string status, string direction, bool takeoff, int schedTime) {
     // Not enough planes allowed / Not enough exist
-    if ((flightsInOperation >= aircraftDeployed) || (aircraftNumber < aircraftDeployed + 1)) {
-        return nullptr;
-    }
-    return new Aircraft(aircraftDeployed++, name, type, status, direction, takeoff);
+    // if ((flightsInOperation >= aircraftDeployed) || (aircraftNumber < aircraftDeployed + 1)) {
+    //     return nullptr;
+    // }
+    return new Aircraft(aircraftDeployed++, name, type, status, direction, takeoff, schedTime);
 
 }
 
