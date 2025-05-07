@@ -28,6 +28,7 @@ add_executable(ATCSimulation main.cpp
         Orchestrator.h
         FlightSchedule.cpp
         FlightSchedule.h
+        AVNChecker.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
