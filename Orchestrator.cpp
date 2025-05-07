@@ -283,7 +283,7 @@ Vector2 getStartEnd(string direction, string phase, int runway) {
         } else if (phase == "Approach") {
             startEnd.x = 0;
             startEnd.y = 100;
-        } else if (phase == "Landing") {
+        } else if (phase == "Land") {
             startEnd.x = 100;
             startEnd.y = 235;
         }
@@ -304,7 +304,7 @@ Vector2 getStartEnd(string direction, string phase, int runway) {
             } else if (phase == "Approach") {
                 startEnd.x = 0;
                 startEnd.y = 100;
-            } else if (phase == "Landing") {
+            } else if (phase == "Land") {
                 startEnd.x = 100;
                 startEnd.y = 235;
             }
@@ -324,7 +324,7 @@ Vector2 getStartEnd(string direction, string phase, int runway) {
             } else if (phase == "Approach") {
                 startEnd.x = 450;
                 startEnd.y = 350;
-            } else if (phase == "Landing") {
+            } else if (phase == "Land") {
                 startEnd.x = 350;
                 startEnd.y = 235;
             }
@@ -346,7 +346,7 @@ Vector2 getStartEnd(string direction, string phase, int runway) {
             } else if (phase == "Approach") {
                 startEnd.x = 0;
                 startEnd.y = 193;
-            } else if (phase == "Landing") {
+            } else if (phase == "Land") {
                 startEnd.x = 193;
                 startEnd.y = 325;
             }
@@ -366,7 +366,7 @@ Vector2 getStartEnd(string direction, string phase, int runway) {
             } else if (phase == "Approach") {
                 startEnd.x = 800;
                 startEnd.y = 475;
-            } else if (phase == "Landing") {
+            } else if (phase == "Land") {
                 startEnd.x = 475;
                 startEnd.y = 325;
             }
