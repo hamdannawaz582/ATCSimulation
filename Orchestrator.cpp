@@ -104,15 +104,18 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 if (aircraft->takeoffFlag) gate = "Departure";
                 else gate = "At Gate";
 
-                auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
                     printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
                     checkFines();
                     aircraft->SetPhase();
-                    auto now = std::chrono::high_resolution_clock::now();
-                    float elapsedTime = std::chrono::duration<float>(now - start).count();
-                    while (elapsedTime <= aircraft->del_phasetime) {
+                    auto start = std::chrono::high_resolution_clock::now();
+                    while (true) {
+                        auto now = std::chrono::high_resolution_clock::now();
+                        float elapsedTime = std::chrono::duration<float>(now - start).count();
+                        if (elapsedTime >= aircraft->del_phasetime) {
+                            break;
+                        }
                         aircraft->phasetime = elapsedTime;
                     }
                     // sleep(1);
@@ -140,7 +143,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 runways[0]->status = true;
                 runways[0]->aircraftUsing = aircraft;
                 string gate = "At Gate";
-                auto start = std::chrono::high_resolution_clock::now();
+                // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
                     // std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                     // std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
@@ -148,9 +151,13 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
                     checkFines();
                     aircraft->SetPhase();
-                    auto now = std::chrono::high_resolution_clock::now();
-                    float elapsedTime = std::chrono::duration<float>(now - start).count();
-                    while (elapsedTime <= aircraft->del_phasetime) {
+                    auto start = std::chrono::high_resolution_clock::now();
+                    while (true) {
+                        auto now = std::chrono::high_resolution_clock::now();
+                        float elapsedTime = std::chrono::duration<float>(now - start).count();
+                        if (elapsedTime >= aircraft->del_phasetime) {
+                            break;
+                        }
                         aircraft->phasetime = elapsedTime;
                     }
                     // sleep(1);
@@ -176,16 +183,20 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 runways[1]->status = true;
                 runways[1]->aircraftUsing = aircraft;
                 string gate = "Departure";
-                auto start = std::chrono::high_resolution_clock::now();
+                // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
                     printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
                     checkFines();
                     aircraft->SetPhase();
-                    auto now = std::chrono::high_resolution_clock::now();
-                    float elapsedTime = std::chrono::duration<float>(now - start).count();
-                    while (elapsedTime <= aircraft->del_phasetime) {
+                    auto start = std::chrono::high_resolution_clock::now();
+                    while (true) {
+                        auto now = std::chrono::high_resolution_clock::now();
+                        float elapsedTime = std::chrono::duration<float>(now - start).count();
+                        if (elapsedTime >= aircraft->del_phasetime) {
+                            break;
+                        }
                         aircraft->phasetime = elapsedTime;
                     }
 
@@ -222,7 +233,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             string gate;
             if (aircraft->takeoffFlag) gate = "Departure";
             else gate = "At Gate";
-            auto start = std::chrono::high_resolution_clock::now();
+            // auto start = std::chrono::high_resolution_clock::now();
             while (aircraft->phase != gate) {
                 // std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                 // std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
@@ -232,9 +243,13 @@ void* Orchestrator::findAvailableRunway(void* arg) {
 
                 checkFines();
                 aircraft->SetPhase();
-                auto now = std::chrono::high_resolution_clock::now();
-                float elapsedTime = std::chrono::duration<float>(now - start).count();
-                while (elapsedTime <= aircraft->del_phasetime) {
+                auto start = std::chrono::high_resolution_clock::now();
+                while (true) {
+                    auto now = std::chrono::high_resolution_clock::now();
+                    float elapsedTime = std::chrono::duration<float>(now - start).count();
+                    if (elapsedTime >= aircraft->del_phasetime) {
+                        break;
+                    }
                     aircraft->phasetime = elapsedTime;
                 }
                 // sleep(1);
@@ -494,7 +509,7 @@ void Orchestrator::AddFlights() {
     //     aircrafts.push_back(flight5);
     //     std::cout << "Added emergency arrival: " << flight5->get_id() << " (Priority: " << flight5->priority << ", Schedule Time: " << flight5->scheduletime << ")\n";
     // }
-    CloseWindow();
+    // CloseWindow();
 }
 
 void Orchestrator::simulateEmergency() {
