@@ -269,20 +269,24 @@ void Orchestrator::RemoveAircraft(Aircraft* aircraft) {
 void * Orchestrator::loadGUI(void *arg) {
     const int screenWidth = 800;
     const int screenHeight = 450;
-
+    std::cout << "IN GUI FUNC" << std::endl;
     auto * obj = static_cast<Orchestrator*>(arg);
-
+    SetTraceLogLevel(LOG_ALL);
     InitWindow(screenWidth, screenHeight, "AirTrafficControlX");
     SetTargetFPS(60);
+    Vector2 scale = GetWindowScaleDPI();
+
     while (!WindowShouldClose()) {
         BeginDrawing();
+        ClearBackground(RAYWHITE);
         DrawFPS(5, 5);
 
 
+
         // Drawing the runways
-        DrawRectangle(189, 97, 32, 256, GRAY); // Runway A
-        DrawRectangle(221, 321, 256, 32, GRAY); // Runway B
-        DrawRectangle(139, 97, 32, 256, GRAY); // Runway C
+        DrawRectangle(189, 97, 32/scale.x, 256/scale.y, GRAY); // Runway A
+        DrawRectangle(221, 321, 256/scale.x, 32/scale.y, GRAY); // Runway B
+        DrawRectangle(139, 97, 32/scale.x, 256/scale.y, GRAY); // Runway C
 
         // Drawing Taxiways
         DrawRectangle(221, 359, 192, 8, GRAY);
@@ -293,6 +297,10 @@ void * Orchestrator::loadGUI(void *arg) {
         DrawText("A", 195, 292, 20, BLACK);
         DrawText("B", 228, 321, 20, BLACK);
         DrawText("C", 145, 292, 20, BLACK);
+
+        DrawCircleV(GetMousePosition(), 4, DARKGRAY);
+        DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+            {GetMousePosition().x - 44, GetMousePosition().y - 24}, 20, 2, BLACK);
 
         EndDrawing();
     }
@@ -486,7 +494,7 @@ void Orchestrator::AddFlights() {
     //     aircrafts.push_back(flight5);
     //     std::cout << "Added emergency arrival: " << flight5->get_id() << " (Priority: " << flight5->priority << ", Schedule Time: " << flight5->scheduletime << ")\n";
     // }
-
+    CloseWindow();
 }
 
 void Orchestrator::simulateEmergency() {

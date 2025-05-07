@@ -9,9 +9,7 @@ int main() {
     pthread_create(&FlightSim, NULL, Orchestrator::proceedSimulation, &orchestrator);
     pthread_detach(FlightSim);
     // orchestrator.proceedSimulation();
-    pthread_t GUIThread;
-    pthread_create(&GUIThread, NULL, Orchestrator::loadGUI, &orchestrator);
-    pthread_detach(GUIThread);
+    Orchestrator::loadGUI(&orchestrator);
     pthread_exit(NULL);
 
     return 0;
