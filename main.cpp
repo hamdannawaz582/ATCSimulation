@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "AVNChecker.h"
 #include "Orchestrator.h"
-
+#include "AirlineFine.h""
 //  Added all File Descriptors to Orchestrator.h
 int AVNFD[2];
 int FineFD[2];
@@ -21,6 +21,9 @@ int main() {
     pthread_detach(FlightSim);
     if (fork() == 0) {
         checkAVN(AVNFD[0]);
+    }
+    if (fork() == 0) {
+        AirlineFine();
     }
     Orchestrator::loadGUI(&orchestrator);
     pthread_exit(NULL);
