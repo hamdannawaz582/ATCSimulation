@@ -100,9 +100,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[2]->ID);
 
                 runways[2]->status = true;
-                pthread_mutex_lock(&runways[2]->mtx);
+                // pthread_mutex_lock(&runways[2]->mtx);
                 runways[2]->aircraftUsing = aircraft;
-                pthread_mutex_unlock(&runways[2]->mtx);
+                // pthread_mutex_unlock(&runways[2]->mtx);
 
                 string gate;
                 if (aircraft->takeoffFlag) gate = "Departure";
@@ -132,9 +132,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[2]->status = false;
             // std::cout << std::endl;
-            pthread_mutex_lock(&runways[2]->mtx2);
+            // pthread_mutex_lock(&runways[2]->mtx2);
             runways[2]->aircraftUsing = nullptr;
-            pthread_mutex_unlock(&runways[2]->mtx2);
+            // pthread_mutex_unlock(&runways[2]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[2]->mtx);
             pthread_exit(NULL);
@@ -148,9 +148,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 // std::cout << aircraft->get_id() << " Started using Runway " << runways[0]->ID << "\n";
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[0]->ID);
                 runways[0]->status = true;
-                pthread_mutex_lock(&runways[0]->mtx2);
+                // pthread_mutex_lock(&runways[0]->mtx2);
                 runways[0]->aircraftUsing = aircraft;
-                pthread_mutex_unlock(&runways[0]->mtx2);
+                // pthread_mutex_unlock(&runways[0]->mtx2);
                 string gate = "At Gate";
                 // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
@@ -179,9 +179,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[0]->status = false;
             // std::cout << std::endl;
-            pthread_mutex_lock(&runways[0]->mtx2);
+            // pthread_mutex_lock(&runways[0]->mtx2);
             runways[0]->aircraftUsing = nullptr;
-            pthread_mutex_unlock(&runways[0]->mtx2);
+            // pthread_mutex_unlock(&runways[0]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[0]->mtx);
             pthread_exit(NULL);
@@ -193,9 +193,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[1]->ID);
 
                 runways[1]->status = true;
-                pthread_mutex_lock(&runways[1]->mtx2);
+                // pthread_mutex_lock(&runways[1]->mtx2);
                 runways[1]->aircraftUsing = aircraft;
-                pthread_mutex_unlock(&runways[1]->mtx2);
+                // pthread_mutex_unlock(&runways[1]->mtx2);
                 string gate = "Departure";
                 // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
@@ -222,9 +222,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[1]->status = false;
             // std::cout << std::endl;
-            pthread_mutex_lock(&runways[1]->mtx2);
+            // pthread_mutex_lock(&runways[1]->mtx2);
             runways[1]->aircraftUsing = nullptr;
-            pthread_mutex_unlock(&runways[1]->mtx2);
+            // pthread_mutex_unlock(&runways[1]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[1]->mtx);
             pthread_exit(NULL);
@@ -245,9 +245,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 schedule.addFlight(runways[2]->aircraftUsing);
             }
             runways[2]->status = true;
-            pthread_mutex_lock(&runways[2]->mtx2);
+            // pthread_mutex_lock(&runways[2]->mtx2);
             runways[2]->aircraftUsing = aircraft;
-            pthread_mutex_unlock(&runways[2]->mtx2);
+            // pthread_mutex_unlock(&runways[2]->mtx2);
 
             string gate;
             if (aircraft->takeoffFlag) gate = "Departure";
@@ -281,9 +281,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
         }
         runways[2]->status = false;
         // std::cout << std::endl;
-        pthread_mutex_lock(&runways[2]->mtx2);
+        // pthread_mutex_lock(&runways[2]->mtx2);
         runways[2]->aircraftUsing = nullptr;
-        pthread_mutex_unlock(&runways[2]->mtx2);
+        // pthread_mutex_unlock(&runways[2]->mtx2);
         RemoveAircraft(aircraft);
         pthread_mutex_unlock(&runways[2]->mtx);
         pthread_exit(NULL);
