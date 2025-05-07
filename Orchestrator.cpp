@@ -296,7 +296,7 @@ void * Orchestrator::loadGUI(void *arg) {
 
         EndDrawing();
     }
-
+    // pthread_exit(NULL);
 }
 
 void Orchestrator::scheduleRunways() {
@@ -495,16 +495,19 @@ void Orchestrator::simulateEmergency() {
 void Orchestrator::simulateGroundFault() {
 }
 
-void Orchestrator::proceedSimulation() {
+void* Orchestrator::proceedSimulation(void* arg) {
     // TODO: Add timer code to implement delta time after adding SFML
-    scheduleRunways();
-    simulateEmergency();
+    Orchestrator* obj = static_cast<Orchestrator*>(arg);
+    obj->AddFlights();
+    obj->scheduleRunways();
+    obj->simulateEmergency();
 
-    for (auto const& aircraft : aircrafts) {
+    for (auto const& aircraft : obj->aircrafts) {
         if (aircraft->get_status() != "Holding" && aircraft->get_status() != "Approach" && aircraft->get_status() != "Departure") {
-            simulateGroundFault();
+            obj->simulateGroundFault();
         }
     }
+    // pthread_exit(NULL);
 }
 
 Orchestrator::~Orchestrator() {

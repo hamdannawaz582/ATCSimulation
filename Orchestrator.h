@@ -31,7 +31,7 @@ public:
     Orchestrator();
     void AddFlights();
     void checkFines();
-    void proceedSimulation();
+    static void * proceedSimulation(void* arg);
     static void * loadGUI(void *arg);
     ~Orchestrator();
 };
