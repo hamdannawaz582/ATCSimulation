@@ -35,6 +35,7 @@ Aircraft::Aircraft(int id, string airline, string type, string status, string di
     this->arrivaltime = schedTime;
     this->waittime = 0;
     SetSpeed();
+    del_phasetime = 2;
 }
 
 void Aircraft::SetSpeed() {
@@ -122,3 +123,7 @@ void Aircraft::SetPhase() {
     status = phase;
     SetSpeed();
 }
+float Aircraft::PhaseProgress() {
+    return (phasetime/del_phasetime)*100;
+}
+

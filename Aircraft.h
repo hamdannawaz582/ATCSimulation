@@ -28,6 +28,9 @@ public:
     string direction;
     /// True if aircraft is taking off, false if landing
     bool takeoffFlag;
+    float phasetime;
+    float del_phasetime;
+
     /// Get identifier of Aircraft
     /// @return Alphanumeric Identifier
     string get_id() const;
@@ -47,6 +50,7 @@ public:
     Aircraft(int id, string airline, string type, string status, string direction, bool takeoff,int schedTime);
     void SetSpeed();
     void SetPhase();
+    float PhaseProgress();
 };
 
 
