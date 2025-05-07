@@ -43,49 +43,10 @@ void Orchestrator::fineAirline(string airline) {
     }
 }
 
-void Orchestrator::checkFines() {
-    for (auto const& aircraft : aircrafts) {
-        string status = aircraft->get_status();
-        if (status == "At Gate") {
-            if (aircraft->speed <= 10) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-        } else if (status == "Taxi") {
-            if (aircraft->speed <= 30) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-
-        } else if (status == "Takeoff Roll") {
-            if (aircraft->speed <= 290) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-
-        } else if (status == "Climb") {
-            if (aircraft->speed <= 463) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-
-        } else if (status == "Departure") {
-            if (aircraft->speed <= 900 && aircraft->speed >= 800) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-
-        } else if (status == "Holding") {
-            if (aircraft->speed < 600) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-        } else if (status == "Approach") {
-            if (aircraft->speed <= 290 && aircraft->speed >= 240) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-
-        } else if (status == "Landing") {
-            if (aircraft->speed <= 240 && aircraft->speed >= 30) goto endfine;
-            aircraft->AVN = true;
-            fineAirline(aircraft->get_airline());
-        }
-        endfine:;
-    }
+void Orchestrator::checkFines(Aircraft* aircraft) {
+    std::string AVNMessage =  aircraft->get_airline() + "/" + aircraft->get_id() + "/" + aircraft->get_type() + "/" + std::to_string(aircraft->speed) + "/" + aircraft->get_status() + "\n";
+    const char *buffer = AVNMessage.c_str();
+    write(fd, buffer, strlen(buffer));
 }
 
 void* Orchestrator::findAvailableRunway(void* arg) {
@@ -111,7 +72,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 while (aircraft->phase != gate) {
                     printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
-                    checkFines();
+                    checkFines(aircraft);
                     aircraft->SetPhase();
                     auto start = std::chrono::high_resolution_clock::now();
                     while (true) {
@@ -126,6 +87,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 }
                 // std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
                 // std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
+                checkFines(aircraft);
                 printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                 printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
@@ -158,7 +120,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     // std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
                     printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
-                    checkFines();
+                    checkFines(aircraft);
                     aircraft->SetPhase();
                     auto start = std::chrono::high_resolution_clock::now();
                     while (true) {
@@ -171,6 +133,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     }
                     // sleep(1);
                 }
+                checkFines(aircraft);
                 printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                 printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
@@ -202,7 +165,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                     printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                     printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
-                    checkFines();
+                    checkFines(aircraft);
                     aircraft->SetPhase();
                     auto start = std::chrono::high_resolution_clock::now();
                     while (true) {
@@ -216,6 +179,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
 
                     // sleep(1);
                 }
+                checkFines(aircraft);
                 printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());
                 printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
@@ -260,7 +224,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 printf("%s Speed: %d km/h.\n", aircraft->get_id().c_str(), aircraft->speed);
 
 
-                checkFines();
+                checkFines(aircraft);
                 aircraft->SetPhase();
                 auto start = std::chrono::high_resolution_clock::now();
                 while (true) {
@@ -273,6 +237,7 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 }
                 // sleep(1);
             }
+            checkFines(aircraft);
             // std::cout << aircraft->get_id() << " Entering " << aircraft->phase << " Phase.\n";
             // std::cout << aircraft->get_id() << " Speed: " << aircraft->speed << " km/h.\n";
             printf("%s Entering %s Phase.\n", aircraft->get_id().c_str(), aircraft->phase.c_str());

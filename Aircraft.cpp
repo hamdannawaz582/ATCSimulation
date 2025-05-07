@@ -57,11 +57,11 @@ void Aircraft::SetSpeed() {
         int option = rand() % 3;
 
         if (option == 0) {
-            speed = (rand() % 5) + (min - 5); // [min-20, min-1]
+            speed = (rand() % 25) + (min - 25); // [min-20, min-1]
         } else if (option == 1) {
             speed = (rand() % (max - min + 1)) + min; // [min, max]
         } else {
-            speed = (rand() % 5) + (max + 1); // [max+1, max+20]
+            speed = (rand() % 25) + (max + 1); // [max+1, max+20]
         }
     }
     else

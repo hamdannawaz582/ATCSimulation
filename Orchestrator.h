@@ -28,9 +28,10 @@ class Orchestrator {
 
 
 public:
+    int fd;
     Orchestrator();
     void AddFlights();
-    void checkFines();
+    void checkFines(Aircraft* aircraft);
     static void * proceedSimulation(void* arg);
     static void * loadGUI(void *arg);
     ~Orchestrator();
