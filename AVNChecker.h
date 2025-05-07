@@ -28,7 +28,7 @@ void AddNotice(std::vector<std::string> result) {
     type = result[2];
     speed = result[3];
 
-    std::ofstream file(airline.c_str(), std::ios::app);
+    std::ofstream file(airline + ".txt", std::ios::app);
     file << AVNID++ << std::endl;
     file << airline << std::endl;
     file << ID << std::endl;
@@ -54,16 +54,16 @@ void UpdateStatus(int fineFD) {
 
 }
 
-void checkAVN(int recievefd, int fineFD)
+void checkAVN(int recievefd)
 {
     int AVNID = 0;
     char buffer[1024];
     int flags = fcntl(recievefd, F_GETFL, 0);
     fcntl(recievefd, F_SETFL, flags | O_NONBLOCK);
 
-    if (fork() == 0) {
-        UpdateStatus(fineFD);
-    }
+    // if (fork() == 0) {
+    //     UpdateStatus(fineFD);
+    // }
 
     while (true) {
         int bytesRead = read(recievefd, buffer, 1024);
