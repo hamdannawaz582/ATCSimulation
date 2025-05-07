@@ -20,6 +20,7 @@ Orchestrator::Orchestrator() {
     for (int i = 0; i < 3; i++) {
         runways[i] = new Runway{char('A' + i), false, nullptr};
         pthread_mutex_init(&runways[i]->mtx, nullptr);
+        pthread_mutex_init(&runways[i]->mtx2, nullptr);
     }
     int index = 0;
     bool flag = false;
@@ -99,7 +100,10 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[2]->ID);
 
                 runways[2]->status = true;
+                pthread_mutex_lock(&runways[2]->mtx);
                 runways[2]->aircraftUsing = aircraft;
+                pthread_mutex_unlock(&runways[2]->mtx);
+
                 string gate;
                 if (aircraft->takeoffFlag) gate = "Departure";
                 else gate = "At Gate";
@@ -128,6 +132,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[2]->status = false;
             // std::cout << std::endl;
+            pthread_mutex_lock(&runways[2]->mtx2);
+            runways[2]->aircraftUsing = nullptr;
+            pthread_mutex_unlock(&runways[2]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[2]->mtx);
             pthread_exit(NULL);
@@ -141,7 +148,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 // std::cout << aircraft->get_id() << " Started using Runway " << runways[0]->ID << "\n";
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[0]->ID);
                 runways[0]->status = true;
+                pthread_mutex_lock(&runways[0]->mtx2);
                 runways[0]->aircraftUsing = aircraft;
+                pthread_mutex_unlock(&runways[0]->mtx2);
                 string gate = "At Gate";
                 // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
@@ -170,6 +179,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[0]->status = false;
             // std::cout << std::endl;
+            pthread_mutex_lock(&runways[0]->mtx2);
+            runways[0]->aircraftUsing = nullptr;
+            pthread_mutex_unlock(&runways[0]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[0]->mtx);
             pthread_exit(NULL);
@@ -181,7 +193,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 printf(">\t%s Started using Runway %c\n", aircraft->get_id().c_str(), runways[1]->ID);
 
                 runways[1]->status = true;
+                pthread_mutex_lock(&runways[1]->mtx2);
                 runways[1]->aircraftUsing = aircraft;
+                pthread_mutex_unlock(&runways[1]->mtx2);
                 string gate = "Departure";
                 // auto start = std::chrono::high_resolution_clock::now();
                 while (aircraft->phase != gate) {
@@ -208,6 +222,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
             }
             runways[1]->status = false;
             // std::cout << std::endl;
+            pthread_mutex_lock(&runways[1]->mtx2);
+            runways[1]->aircraftUsing = nullptr;
+            pthread_mutex_unlock(&runways[1]->mtx2);
             RemoveAircraft(aircraft);
             pthread_mutex_unlock(&runways[1]->mtx);
             pthread_exit(NULL);
@@ -228,7 +245,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
                 schedule.addFlight(runways[2]->aircraftUsing);
             }
             runways[2]->status = true;
+            pthread_mutex_lock(&runways[2]->mtx2);
             runways[2]->aircraftUsing = aircraft;
+            pthread_mutex_unlock(&runways[2]->mtx2);
 
             string gate;
             if (aircraft->takeoffFlag) gate = "Departure";
@@ -262,6 +281,9 @@ void* Orchestrator::findAvailableRunway(void* arg) {
         }
         runways[2]->status = false;
         // std::cout << std::endl;
+        pthread_mutex_lock(&runways[2]->mtx2);
+        runways[2]->aircraftUsing = nullptr;
+        pthread_mutex_unlock(&runways[2]->mtx2);
         RemoveAircraft(aircraft);
         pthread_mutex_unlock(&runways[2]->mtx);
         pthread_exit(NULL);
@@ -275,6 +297,124 @@ void Orchestrator::RemoveAircraft(Aircraft* aircraft) {
             airlines[i]->aircraftReturn(aircraft);
             break;
         }
+    }
+}
+
+Vector2 getStartEnd(string direction, string phase, int runway) {
+    Vector2 startEnd;
+    if (runway == 2) {
+        if (phase == "At Gate") {
+            startEnd.x = 315;
+            startEnd.y = 315;
+        } else if (phase == "Takeoff Roll") {
+            startEnd.x = 235;
+            startEnd.y = 100;
+        } else if (phase == "Climb") {
+            startEnd.x = 100;
+            startEnd.y = 0;
+        } else if (phase == "Taxi") {
+            startEnd.x = 315;
+            startEnd.y = 235;
+        } else if (phase == "Approach") {
+            startEnd.x = 0;
+            startEnd.y = 100;
+        } else if (phase == "Landing") {
+            startEnd.x = 100;
+            startEnd.y = 235;
+        }
+    } else if (runway == 0) {
+        if (direction == "North") {
+            if (phase == "At Gate") {
+                startEnd.x = 315;
+                startEnd.y = 315;
+            } else if (phase == "Takeoff Roll") {
+                startEnd.x = 235;
+                startEnd.y = 100;
+            } else if (phase == "Climb") {
+                startEnd.x = 100;
+                startEnd.y = 0;
+            } else if (phase == "Taxi") {
+                startEnd.x = 315;
+                startEnd.y = 235;
+            } else if (phase == "Approach") {
+                startEnd.x = 0;
+                startEnd.y = 100;
+            } else if (phase == "Landing") {
+                startEnd.x = 100;
+                startEnd.y = 235;
+            }
+        } else if (direction == "South") {
+            if (phase == "At Gate") {
+                startEnd.x = 315;
+                startEnd.y = 315;
+            } else if (phase == "Takeoff Roll") {
+                startEnd.x = 235;
+                startEnd.y = 350;
+            } else if (phase == "Climb") {
+                startEnd.x = 350;
+                startEnd.y = 450;
+            } else if (phase == "Taxi") {
+                startEnd.x = 315;
+                startEnd.y = 235;
+            } else if (phase == "Approach") {
+                startEnd.x = 450;
+                startEnd.y = 350;
+            } else if (phase == "Landing") {
+                startEnd.x = 350;
+                startEnd.y = 235;
+            }
+        }
+    } else {
+        if (direction == "West") {
+            if (phase == "At Gate") {
+                startEnd.x = 225;
+                startEnd.y = 225;
+            } else if (phase == "Takeoff Roll") {
+                startEnd.x = 325;
+                startEnd.y = 478;
+            } else if (phase == "Climb") {
+                startEnd.x = 478;
+                startEnd.y = 800;
+            } else if (phase == "Taxi") {
+                startEnd.x = 225;
+                startEnd.y = 325;
+            } else if (phase == "Approach") {
+                startEnd.x = 0;
+                startEnd.y = 193;
+            } else if (phase == "Landing") {
+                startEnd.x = 193;
+                startEnd.y = 325;
+            }
+        } else if (direction == "East") {
+            if (phase == "At Gate") {
+                startEnd.x = 225;
+                startEnd.y = 225;
+            } else if (phase == "Takeoff Roll") {
+                startEnd.x = 325;
+                startEnd.y = 192;
+            } else if (phase == "Climb") {
+                startEnd.x = 192;
+                startEnd.y = 0;
+            } else if (phase == "Taxi") {
+                startEnd.x = 225;
+                startEnd.y = 325;
+            } else if (phase == "Approach") {
+                startEnd.x = 800;
+                startEnd.y = 475;
+            } else if (phase == "Landing") {
+                startEnd.x = 475;
+                startEnd.y = 325;
+            }
+        }
+    }
+    return startEnd;
+}
+
+int getCurrent(int start, int end, float progress) {
+    if (end > start) {
+        return start + (int)(progress * (end - start));
+    } else {
+        return start - (int)(progress * (start - end));
     }
 }
 
@@ -316,6 +456,80 @@ void * Orchestrator::loadGUI(void *arg) {
         DrawCircleV(GetMousePosition(), 4, DARKGRAY);
         DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
             {GetMousePosition().x - 44, GetMousePosition().y - 24}, 20, 2, BLACK);
+
+        for (int i = 0; i < 3; i++) {
+            pthread_mutex_lock(&(obj->runways[i]->mtx2));
+            if (obj->runways[i]->aircraftUsing == nullptr) {
+                pthread_mutex_unlock(&(obj->runways[i]->mtx2));
+                continue;
+            }
+            string phase = obj->runways[i]->aircraftUsing->phase;
+            string direction = obj->runways[i]->aircraftUsing->direction;
+            float progress = (obj->runways[i]->aircraftUsing->PhaseProgress())/100;
+            string ID = (obj->runways[i]->aircraftUsing->get_id());
+            // std::cout << ID << " " << phase << " " << direction << " " << progress << " " << i << std::endl;
+            pthread_mutex_unlock(&(obj->runways[i]->mtx2));
+            Vector2 startEnd = getStartEnd(direction, phase, i);
+            if (i == 0) {
+                if (phase == "At Gate" || phase == "Taxi") {
+                    DrawCircle(202 - 20, getCurrent(startEnd.x, startEnd.y, progress), 4, RED);
+                    DrawText(ID.c_str(), 202 - 20, getCurrent(startEnd.x, startEnd.y, progress) - 10, 20, BLACK);
+                } else {
+                    DrawCircle(202, getCurrent(startEnd.x, startEnd.y, progress), 4, RED);
+                    DrawText(ID.c_str(), 202, getCurrent(startEnd.x, startEnd.y, progress) - 10, 20, BLACK);
+                }
+
+                // Drawing Text Info
+                DrawText("Runway: ", 10, 10, 20, BLACK);
+                DrawText("A", 100, 10, 20, BLACK);
+                DrawText("Direction: ", 10, 40, 20, BLACK);
+                DrawText(direction.c_str(), 100, 40, 20, BLACK);
+                DrawText("Phase: ", 10, 70, 20, BLACK);
+                DrawText(phase.c_str(), 100, 70, 20, BLACK);
+                DrawText("Progress: ", 10, 100, 20, BLACK);
+                DrawText((std::to_string(int(progress*100)) + "%").c_str(), 100, 100, 20, BLACK);
+
+            } else if (i == 1) {
+                if (phase == "At Gate" || phase == "Taxi") {
+                    DrawCircle(getCurrent(startEnd.x, startEnd.y, progress), 340 + 20, 4, GREEN);
+                    DrawText(ID.c_str(), getCurrent(startEnd.x, startEnd.y, progress) - 10, 340 + 40, 20, BLACK);
+                } else {
+                    DrawCircle(getCurrent(startEnd.x, startEnd.y, progress), 340, 4, GREEN);
+                    DrawText(ID.c_str(), getCurrent(startEnd.x, startEnd.y, progress) - 10, 340 + 20, 20, BLACK);
+                }
+
+                // Drawing Text Info
+                DrawText("Runway: ", 550, 10, 20, BLACK);
+                DrawText("B", 650, 10, 20, BLACK);
+                DrawText("Direction: ", 550, 40, 20, BLACK);
+                DrawText(direction.c_str(), 650, 40, 20, BLACK);
+                DrawText("Phase: ", 550, 70, 20, BLACK);
+                DrawText(phase.c_str(), 650, 70, 20, BLACK);
+                DrawText("Prog: ", 550, 100, 20, BLACK);
+                DrawText((std::to_string(int(progress*100)) + "%").c_str(), 650, 100, 20, BLACK);
+
+            } else {
+                if (phase == "At Gate" || phase == "Taxi") {
+                    DrawCircle(152 - 20, getCurrent(startEnd.x, startEnd.y, progress), 4, BLUE);
+                    DrawText(ID.c_str(), 152 - 20, getCurrent(startEnd.x, startEnd.y, progress) - 10, 20, BLACK);
+                } else {
+                    DrawCircle(152, getCurrent(startEnd.x, startEnd.y, progress), 4, BLUE);
+                    DrawText(ID.c_str(), 152, getCurrent(startEnd.x, startEnd.y, progress) - 10, 20, BLACK);
+                }
+
+                // Drawing Text Info
+                DrawText("Runway: ", 550, 300, 20, BLACK);
+                DrawText("B", 650, 300, 20, BLACK);
+                DrawText("Direction: ", 550, 340, 20, BLACK);
+                DrawText(direction.c_str(), 650, 340, 20, BLACK);
+                DrawText("Phase: ", 550, 370, 20, BLACK);
+                DrawText(phase.c_str(), 650, 370, 20, BLACK);
+                DrawText("Prog: ", 550, 400, 20, BLACK);
+                DrawText((std::to_string(int(progress*100)) + "%").c_str(), 650, 400, 20, BLACK);
+            }
+
+
+        }
 
         EndDrawing();
     }
@@ -468,7 +682,7 @@ void Orchestrator::AddFlights() {
         std::cout << "Added military departure: " << flight4->get_id() << " (Priority: " << flight4->priority << ", Schedule Time: " << flight4->arrivaltime << ")\n";
     }
 
-    Aircraft* flight5 = airlines[5]->aircraftGen("Holding", "East", false, 5);  // Medical arrival at time 25
+    Aircraft* flight5 = airlines[5]->aircraftGen("Holding", "East", true, 5);  // Medical arrival at time 25
     if (flight5) {
         flight5->priority = 1;  // Emergency priority
         aircrafts.push_back(flight5);
