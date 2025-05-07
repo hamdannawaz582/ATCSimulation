@@ -29,6 +29,8 @@ add_executable(ATCSimulation main.cpp
         FlightSchedule.cpp
         FlightSchedule.h
         AVNChecker.h
+        AirlineFine.h
+        raygui.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
